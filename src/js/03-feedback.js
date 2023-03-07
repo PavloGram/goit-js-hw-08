@@ -1,19 +1,20 @@
-// import throttle from 'lodash.throttle';
+import throttle from 'lodash.throttle';
+const STORAGE_KEY = 'feedback-form-state';
 
 const form = document.querySelector('.feedback-form');
 
 form.addEventListener('submit', onformSubmit);
-form.addEventListener('input', currentValue);
+form.addEventListener('input', throttle (currentValue, 500));
 
 saveValue();
 
-function currentValue(event) {
+function currentValue(eve) {
   const value = {
-    email: event.currentTarget.email.value,
-    msg: event.currentTarget.message.value,
+    email: eve.target.value,
+    msg: eve.target.value,
   };
   const jValue = JSON.stringify(value);
-  localStorage.setItem('feedback-form-state', jValue);
+  localStorage.setItem(STORAGE_KEY, jValue);
 }
 
 function onformSubmit(event) {
@@ -32,17 +33,17 @@ function onformSubmit(event) {
     console.log(loginInfo);
 
     event.currentTarget.reset();
-    localStorage.clear();
+    localStorage.removeItem(STORAGE_KEY);
   }
 }
 
 function saveValue() {
-  const va = localStorage.getItem('feedback-form-state');
-  const vo = JSON.parse(va);
+  const localStorageValue = localStorage.getItem(STORAGE_KEY);
+  const valueForLoad = JSON.parse(localStorageValue);
 
 
-  if (va) {
-    form.message.value = vo.msg;
-    form.email.value = vo.email;
+  if (localStorageValue) {
+    form.message.value = valueForLoad.msg;
+    form.email.value = valueForLoad.email;
   }
 }
